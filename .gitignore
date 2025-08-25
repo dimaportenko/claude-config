@@ -1,0 +1,19 @@
+# Ignore everything
+*
+
+# Keep settings.json
+!settings.json
+
+# Keep hooks directory and all its contents
+!hooks/
+!hooks/**
+
+!.gitignore
+
+# But ignore log files in hooks
+hooks/*.log
+
+# Ignore OS X system files
+hooks/.DS_Store
+
+
