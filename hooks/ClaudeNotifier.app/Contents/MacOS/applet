@@ -1,0 +1,9 @@
+#!/bin/bash
+
+# Get the arguments passed to the app
+title="$1"
+message="$2"
+sound="${3:-Tink}"
+
+# Send the notification
+osascript -e "display notification \"$message\" with title \"$title\" sound name \"$sound\""
