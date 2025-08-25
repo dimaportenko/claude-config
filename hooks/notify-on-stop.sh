@@ -7,34 +7,23 @@
 input=$(cat)
 
 # Extract relevant information from the JSON input
-session_cost=$(echo "$input" | jq -r '.session_cost_usd // "unknown"')
-active_time=$(echo "$input" | jq -r '.active_time_ms // null' | sed 's/null/unknown/')
+session_id=$(echo "$input" | jq -r '.session_id // "unknown"')
 hook_event=$(echo "$input" | jq -r '.hook_event_name // "Claude Code"')
 
-# Format active time if available
-if [[ "$active_time" != "unknown" ]]; then
-    active_seconds=$((active_time / 1000))
-    if [[ $active_seconds -gt 60 ]]; then
-        active_minutes=$((active_seconds / 60))
-        remaining_seconds=$((active_seconds % 60))
-        active_time_formatted="${active_minutes}m ${remaining_seconds}s"
-    else
-        active_time_formatted="${active_seconds}s"
-    fi
+# Get short session ID for reference (last 8 characters)
+if [[ "$session_id" != "unknown" ]]; then
+    short_session_id="${session_id: -8}"
+    session_ref=" • Session: $short_session_id"
 else
-    active_time_formatted="unknown"
+    session_ref=""
 fi
 
-# Format cost display
-if [[ "$session_cost" != "unknown" ]]; then
-    cost_display="Cost: \$${session_cost}"
-else
-    cost_display="Cost: unknown"
-fi
+# Get current time for completion timestamp
+completion_time=$(date "+%H:%M")
 
 # Create notification message
-title="Claude Code Finished"
-message="Session complete - Time: ${active_time_formatted}, ${cost_display}"
+title="Claude Code Ready"
+message="Session complete at $completion_time$session_ref"
 
 # Send macOS notification with custom icon
 "$HOME/.claude/hooks/send-notification.sh" "$title" "$message" "Tink"
