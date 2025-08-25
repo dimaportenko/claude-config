@@ -8,18 +8,35 @@ input=$(cat)
 
 # Extract relevant information from the JSON input
 hook_event=$(echo "$input" | jq -r '.hook_event_name // "Notification"')
-notification_text=$(echo "$input" | jq -r '.text // ""')
+notification_message=$(echo "$input" | jq -r '.message // ""')
+session_id=$(echo "$input" | jq -r '.session_id // "unknown"')
+
+# Skip empty notifications
+if [[ -z "$notification_message" || "$notification_message" == "null" ]]; then
+    exit 0
+fi
+
+# Get short session ID for reference (last 8 characters)
+if [[ "$session_id" != "unknown" ]]; then
+    short_session_id="${session_id: -8}"
+    session_ref=" • Session: $short_session_id"
+else
+    session_ref=""
+fi
+
+# Get current time
+current_time=$(date "+%H:%M")
 
 # Check if this is about waiting for input
-if [[ "$notification_text" == *"waiting for your input"* ]]; then
+if [[ "$notification_message" == *"waiting for your input"* ]]; then
     # Create notification message for waiting input
     title="Claude Code Waiting"
-    message="Ready for your input - check terminal"
-    sound="Ping"
+    message="Claude is waiting • Ready at $current_time$session_ref"
+    sound="Glass"
 else
     # Generic notification for other cases
     title="Claude Code Notification"
-    message="$notification_text"
+    message="$notification_message$session_ref"
     sound="Pop"
 fi
 
