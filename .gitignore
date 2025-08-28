@@ -8,6 +8,9 @@
 !hooks/
 !hooks/**
 
+!commands/
+!commands/**
+
 !.gitignore
 
 # But ignore log files in hooks
