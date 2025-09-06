@@ -29,5 +29,8 @@
   "statusLine": {
     "type": "command",
     "command": "input=$(cat); current_dir=$(echo \"$input\" | jq -r '.workspace.current_dir'); model=$(echo \"$input\" | jq -r '.model.display_name'); branch=\"\"; if [ -d \"$current_dir/.git\" ]; then branch=\" ($(cd \"$current_dir\" && git branch --show-current 2>/dev/null))\"; fi; printf \"\\033[2m%s\\033[0m | \\033[2m%s\\033[0m%s | \\033[2m%s\\033[0m\" \"$(basename \"$current_dir\")\" \"$model\" \"$branch\" \"$(date +%H:%M:%S)\""
+  },
+  "env": {
+    "MAX_MCP_OUTPUT_TOKENS": "75000"
   }
 }
